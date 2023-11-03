@@ -1,0 +1,29 @@
+pipeline {
+    agent any
+    
+    stages {
+        stage('Clone repository') {
+            steps {
+                git 'https://github.com/nzapa-narcisse/alpinehelloworld.git'
+            }
+        }
+        
+        stage('Build Docker image') {
+            steps {
+                sh 'cd alpinehelloworld'
+                sh 'cat doc'
+                sh 'docker rmi -f alpinehelloworld'
+                sh 'docker build -t ${IMAGE_NAME}:${IMAGE_TAG} .'
+            }
+        }
+        
+        stage('Run container') {
+            steps {
+                sh 'docker images'
+                sh 'docker run -d -p 86:5000 --name alpineaceptation ${IMAGE_NAME}:${IMAGE_TAG}'
+                sh 'sleep 10'
+                sh 'docker container ls'
+            }
+        }
+    }
+}
